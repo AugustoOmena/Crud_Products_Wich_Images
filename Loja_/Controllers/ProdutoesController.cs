@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Loja_.Data;
 using Loja_.Models;
+using Elfie.Serialization;
 
 namespace Loja_.Controllers
 {
@@ -66,7 +67,7 @@ namespace Loja_.Controllers
 
             if (ModelState.IsValid)
             {
-                string caminhoParaSalvarImagem = _caminhoServidor + "\\Userimagem\\";
+                string caminhoParaSalvarImagem = _caminhoServidor + "/Produtos/";
                 string novoNomeParaImagem = Guid.NewGuid().ToString() + foto.FileName;
                 string CaminhoDaImagem = caminhoParaSalvarImagem + novoNomeParaImagem;
 
@@ -87,7 +88,7 @@ namespace Loja_.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                produto.UserImage = Path.Combine("/imagem/Userimagem", novoNomeParaImagem); // Caminho absoluto relativo a wwwroot
+                produto.UserImage = Path.Combine("/imagem/Produtos", novoNomeParaImagem);
 
 
                 _context.Add(produto);
@@ -113,9 +114,7 @@ namespace Loja_.Controllers
             return View(produto);
         }
 
-        // POST: Produtoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Produtoes/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Name,Resume,Category,Description,Phone,UserImage,Active")] Produto produto)
@@ -172,10 +171,21 @@ namespace Loja_.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var produto = await _context.Produto.FindAsync(id);
+
+            if (!string.IsNullOrEmpty(produto.UserImage) && produto != null) //se a imagem e produto existir
+            {
+                string caminhoDaImagem = _caminhoServidor + "/Produtos/";
+                var NomeDaimagemParaDeletar = produto.UserImage.Replace("/imagem/Produtos", "");
+
+                NomeDaimagemParaDeletar = caminhoDaImagem + NomeDaimagemParaDeletar;
+                System.IO.File.Delete(NomeDaimagemParaDeletar);
+            }
+
             if (produto != null)
             {
                 _context.Produto.Remove(produto);
             }
+
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

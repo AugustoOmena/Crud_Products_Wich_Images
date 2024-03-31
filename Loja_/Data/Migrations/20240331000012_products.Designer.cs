@@ -4,6 +4,7 @@ using Loja_.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Loja_.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240331000012_products")]
+    partial class products
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace Loja_.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool?>("Active")
+                    b.Property<bool>("Active")
                         .HasColumnType("bit");
 
                     b.Property<string>("Category")
@@ -69,7 +72,7 @@ namespace Loja_.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OwnerID")
+                    b.Property<int>("OwnerID")
                         .HasColumnType("int");
 
                     b.Property<string>("Phone")
@@ -81,6 +84,7 @@ namespace Loja_.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UserImage")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
